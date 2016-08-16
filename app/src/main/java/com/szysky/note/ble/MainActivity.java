@@ -1,15 +1,18 @@
 package com.szysky.note.ble;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
 
     private BluetoothAdapter mBluetoothAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,5 +31,17 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(enableBtIntent, 99);
         }
 
+        mBluetoothAdapter.startLeScan(mLeScanCallback);
+
     }
+
+    // Device scan callback.
+    private BluetoothAdapter.LeScanCallback mLeScanCallback =
+            new BluetoothAdapter.LeScanCallback() {
+                @Override
+                public void onLeScan(final BluetoothDevice device, int rssi,
+                                     byte[] scanRecord) {
+                    Log.i("test", "onLeScan: "+device.getName());
+                }
+            };
 }
