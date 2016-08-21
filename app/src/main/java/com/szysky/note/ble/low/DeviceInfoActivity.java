@@ -35,7 +35,7 @@ import java.util.List;
  * ClassDescription : 根据获取的设备
  *
  */
-public class DeviceInfoActivity extends AppCompatActivity {
+public class DeviceInfoActivity extends AppCompatActivity implements View.OnClickListener {
 
     /**
      * 蓝牙设备信息
@@ -49,6 +49,7 @@ public class DeviceInfoActivity extends AppCompatActivity {
      * listView的Item名称
      */
     private final String LIST_NAME = "NAME", LIST_UUID = "UUID";
+    private TextView tv_operate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,8 @@ public class DeviceInfoActivity extends AppCompatActivity {
         mGattServicesList.setOnChildClickListener(servicesListClickListner);
         mConnectionState = (TextView) findViewById(R.id.connection_state);
         mDataField = (TextView) findViewById(R.id.data_value);
+        tv_operate = (TextView) findViewById(R.id.tv_operate);
+        tv_operate.setOnClickListener(this);
 
         getSupportActionBar().setTitle(mDeviceName);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -223,8 +226,8 @@ public class DeviceInfoActivity extends AppCompatActivity {
     private void displayGattServices(List<BluetoothGattService> gattServices) {
         if (gattServices == null) return;
         String uuid = null;
-        String unknownServiceString = "unknown_service";
-        String unknownCharaString = "unknown_characteristic";
+        String unknownServiceString = "未知服务";
+        String unknownCharaString = "未知特征";
         ArrayList<HashMap<String, String>> gattServiceData = new ArrayList<HashMap<String, String>>();
         ArrayList<ArrayList<HashMap<String, String>>> gattCharacteristicData
                 = new ArrayList<ArrayList<HashMap<String, String>>>();
@@ -286,5 +289,12 @@ public class DeviceInfoActivity extends AppCompatActivity {
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
         intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
         return intentFilter;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+
+        }
     }
 }
