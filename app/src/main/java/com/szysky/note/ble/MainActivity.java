@@ -120,7 +120,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         Intent intent = new Intent(getApplicationContext(), DeviceInfoActivity.class);
+        // 打开新的界面并把选中的设备名称和地址传入下一个界面
+        intent.putExtra("name", device.getName());
+        intent.putExtra("address", device.getAddress());
 
+        startActivity(intent);
 
     }
 
