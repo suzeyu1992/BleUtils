@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onResume();
         isStop = false;
         scanBleDevice(true);
-        
+
         // 创建一个集合用于循环刷新最新的scan结果
         new Thread(new Runnable() {
             @Override
