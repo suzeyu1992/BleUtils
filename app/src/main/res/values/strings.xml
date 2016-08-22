@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BlE</string>
+    <string name="scan_rssi">rssi: %1$d</string>
 </resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!-- cacheColorHint：系统默认拖动过程中列表背景是黑的,设置为透明 -->
+    <ExpandableListView
+        android:id="@+id/elv_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:cacheColorHint="#00000000">
+    </ExpandableListView>
+</LinearLayout>

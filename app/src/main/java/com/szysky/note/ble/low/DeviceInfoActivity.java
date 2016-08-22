@@ -42,14 +42,21 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
      */
     private String mDeviceName, mDeviceAddress ;
     private ExpandableListView mGattServicesList;
-    private TextView mConnectionState;
-    private TextView mDataField;
+    private TextView mDataField, tv_operate, mConnectionState;
 
     /**
      * listView的Item名称
      */
     private final String LIST_NAME = "NAME", LIST_UUID = "UUID";
-    private TextView tv_operate;
+
+    /**
+     * 蓝牙设备的连接状态
+     */
+    private boolean mConnected;
+
+    private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics = new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
+    private BluetoothGattCharacteristic mNotifyCharacteristic;
+    private BluetoothLeService mBluetoothLeService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,10 +110,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
         mBluetoothLeService = null;
     }
 
-    private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
-            new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
-    private BluetoothGattCharacteristic mNotifyCharacteristic;
-    private BluetoothLeService mBluetoothLeService;
+
 
 
     // Code to manage Service lifecycle.
@@ -165,10 +169,6 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
             };
 
 
-    /**
-     * 蓝牙设备的连接状态
-     */
-    private boolean mConnected;
     // Handles various events fired by the Service.
     // ACTION_GATT_CONNECTED: connected to a GATT server.
     // ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
@@ -205,6 +205,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void run() {
                 mConnectionState.setText(strBody);
+                tv_operate.setText(strBody);
             }
         });
     }
@@ -294,7 +295,18 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.tv_operate:
+                // 进行设备的连接和断开的按钮
+                if (mConnected){
+                    mConnected = false;
+                    mBluetoothLeService.disconnect();
+                    mBluetoothLeService.close();
+                }else{
+                    mConnected = true;
+                    mBluetoothLeService.connect(mDeviceAddress);
+                }
 
+                break;
         }
     }
 }

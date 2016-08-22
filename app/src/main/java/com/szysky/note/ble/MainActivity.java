@@ -299,7 +299,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             //设置距离值
             int rssiInt = device.getmRssi();
-            viewHolder.tv_rssi.setText(rssiInt+"");
+            String scan_rssi = getResources().getString(R.string.scan_rssi);
+            viewHolder.tv_rssi.setText(String.format(scan_rssi, rssiInt));
 
             //设置信号强弱图片
             if (rssiInt > -45){
