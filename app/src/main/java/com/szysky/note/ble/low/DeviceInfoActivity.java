@@ -1,5 +1,6 @@
 package com.szysky.note.ble.low;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
@@ -14,8 +15,11 @@ import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ExpandableListView;
+import android.widget.PopupWindow;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
@@ -60,6 +64,11 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics = new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private BluetoothGattCharacteristic mNotifyCharacteristic;
     private BluetoothLeService mBluetoothLeService;
+
+    /**
+     * 对类中进行选择操作的 弹出窗口
+     */
+    private PopupWindow mPopupWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +154,8 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
                 @Override
                 public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
                                             int childPosition, long id) {
+                    displayPopup();
+
                     if (mGattCharacteristics != null) {
                         final BluetoothGattCharacteristic characteristic = mGattCharacteristics.get(groupPosition).get(childPosition);
                         final int charaProp = characteristic.getProperties();
@@ -269,7 +280,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
 
         // Loops through available GATT Services.
         for (BluetoothGattService gattService : gattServices) {
-            HashMap<String, String> currentServiceData = new HashMap<String, String>();
+            HashMap<String, String> currentServiceData = new HashMap<>();
             uuid = gattService.getUuid().toString();
             currentServiceData.put(
                     LIST_NAME, SampleGattAttributes.lookup(uuid, unknownServiceString));
@@ -277,16 +288,16 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
             gattServiceData.add(currentServiceData);
 
             ArrayList<HashMap<String, String>> gattCharacteristicGroupData =
-                    new ArrayList<HashMap<String, String>>();
+                    new ArrayList<>();
             List<BluetoothGattCharacteristic> gattCharacteristics =
                     gattService.getCharacteristics();
             ArrayList<BluetoothGattCharacteristic> charas =
-                    new ArrayList<BluetoothGattCharacteristic>();
+                    new ArrayList<>();
 
             // Loops through available Characteristics.
             for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
                 charas.add(gattCharacteristic);
-                HashMap<String, String> currentCharaData = new HashMap<String, String>();
+                HashMap<String, String> currentCharaData = new HashMap<>();
                 uuid = gattCharacteristic.getUuid().toString();
                 currentCharaData.put(
                         LIST_NAME, SampleGattAttributes.lookup(uuid, unknownCharaString));
@@ -314,7 +325,6 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
 
     /**
      * 构建一个广播的Intent意图, 用于在蓝牙服务中各种状态回调时通知到显示界面.
-     * @return
      */
     private static IntentFilter makeGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
@@ -324,6 +334,57 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
         intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
         return intentFilter;
     }
+
+
+    /**
+     * 封装一个创建popup的方法 只需接收一个layout布局对象
+     *
+     */
+    private void initPopup(View replace_popup) {
+
+        mPopupWindow = null;
+        // 点击 空白处pop可以消失
+        mPopupWindow = new PopupWindow(replace_popup,
+                WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
+        mPopupWindow.setTouchable(true);
+
+        mPopupWindow.setOutsideTouchable(true);
+
+        // 当pop关闭的时候调用此监听方法
+        mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                WindowManager.LayoutParams lp = getWindow().getAttributes();
+                lp.alpha = 1f; // 0.0-1.0
+                getWindow().setAttributes(lp);
+            }
+        });
+    }
+
+    public void displayPopup() {
+
+        View popupup_check_image = getLayoutInflater().inflate(R.layout.popup_check_function, null);
+        initPopup(popupup_check_image);
+        //popup底部取消控件
+        TextView checkFunCancel = (TextView) popupup_check_image.findViewById(R.id.tv_check_cancel);
+        checkFunCancel.setOnClickListener(this);
+
+        mPopupWindow.setAnimationStyle(R.style.popwin_anim_style);
+        mPopupWindow.showAtLocation(new View(this), Gravity.END | Gravity.BOTTOM, 0, 0);
+
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = 0.4f; // 0.0-1.0
+        getWindow().setAttributes(lp);
+
+        TextView checkFunWrite = (TextView) popupup_check_image.findViewById(R.id.tv_check_write);
+        checkFunWrite.setOnClickListener(this);
+
+        TextView checkFunNotify = (TextView) popupup_check_image.findViewById(R.id.tv_check_notify);
+        checkFunNotify.setOnClickListener(this);
+
+    }
+
+
 
     @Override
     public void onClick(View v) {
@@ -339,6 +400,11 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
                     mBluetoothLeService.connect(mDeviceAddress);
                 }
 
+                break;
+
+            //点击取消按钮关闭popupwindow弹窗
+            case R.id.tv_check_cancel:
+                mPopupWindow.dismiss();
                 break;
         }
     }

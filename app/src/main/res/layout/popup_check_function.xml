@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/su_transparent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:id="@+id/ll_visity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/shape_popup_bg_white"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_check_write"
+            android:layout_width="match_parent"
+            android:layout_height="43dp"
+            android:background="@drawable/select_popup_text_bg_gray_all"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="写入数据"
+            android:textColor="@color/su_red"
+            android:textSize="15dp" />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.3dp"
+            android:background="#778C8D8F" />
+
+        <TextView
+            android:id="@+id/tv_check_notify"
+            android:layout_width="match_parent"
+            android:layout_height="43dp"
+            android:background="@drawable/select_popup_text_bg_gray_all"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="监听特征"
+            android:textColor="@color/su_red"
+            android:textSize="15dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/shape_popup_bg_white"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_check_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/select_popup_text_bg_gray_all"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="取消"
+            android:textColor="@color/su_red"
+            android:textSize="15dp" />
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

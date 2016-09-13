@@ -3,4 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="su_transparent">#00000000</color>
+    <!--文本字体颜色  深灰 中等-->
+    <color name="su_text_gray">#C7C7C7</color>
+
+    <color name="su_red">#ff3e3e</color>
 </resources>
