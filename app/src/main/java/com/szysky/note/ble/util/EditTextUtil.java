@@ -2,10 +2,12 @@ package com.szysky.note.ble.util;
 
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.DigitsKeyListener;
 import android.widget.EditText;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,19 +35,76 @@ public class EditTextUtil {
                 editText.setFilters(new InputFilter[]{new InputFilter(){
                     @Override
                     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                        SuLogUtils.e("filter "+source);
-                        //  使用正则进行十六进制的匹配规则
-                        String pattern = "[0-9A-Fa-f]+";
-                        Pattern compile = Pattern.compile(pattern);
-                        Matcher matcher = compile.matcher(source);
+                        SuLogUtils.e("filter "+source+"-");
 
-                        // 如果不能完全匹配 那么对字符内容进行无用的字符过滤
-                        if (!matcher.matches()){
-                            source = Pattern.compile("[^0-9A-Fa-f]+").matcher(source).replaceAll("");
+
+
+                        // 判断是删除操作还是添加操作
+                        if (start==0 && end==0 ){
+                            //  ----删除操作-----
+                            boolean equals = dest.toString().substring(dest.toString().length() - 1, dest.toString().length()).equals(" ");
+                            if (equals){
+                                char[] chars = dest.toString().toCharArray();
+                                chars = Arrays.copyOf(chars, chars.length - 1);
+
+                                dest = SpannableString.valueOf(Arrays.toString(chars));
+
+                            }
+
+                        }else{
+                            // ----添加操作-----
+                            //  使用正则进行十六进制的匹配规则
+                            String pattern = "[0-9A-Fa-f]+";
+                            Pattern compile = Pattern.compile(pattern);
+                            Matcher matcher = compile.matcher(source);
+
+                            // 如果不能完全匹配 那么对字符内容进行无用的字符过滤
+                            if (!matcher.matches()){
+                                source = Pattern.compile("[^0-9A-Fa-f]+").matcher(source).replaceAll("");
+                            }
+
+                            // 为了保证16进制的工整, 转换为大写
+                            source = source.toString().toUpperCase();
+                            // 重新组装的容器
+                            StringBuffer stringBuffer = new StringBuffer();
+
+                            int desLength = dest.toString().length();
+
+                            // 有可能需要添加空格
+                            // 判断长度是否大于2 并且已存在的最后两个元素是否已经不存在空格, 如果条件为true那么需要在新加入的内容最前面添加空格
+                            if (desLength >= 2 && (!dest.toString().substring(desLength-2, desLength).contains(" "))){
+                                stringBuffer.append(" ");
+                            }
+
+
+
+                            // ---------------------开始处理填入数据内容---------------------
+                            // 获得长度判断需要多少个空格
+                            int blankNum = source.toString().length() / 2;
+                            if (blankNum >= 1){
+                                // 获取源数据的字符数组
+                                char[] chars = source.toString().toCharArray();
+
+
+
+                                // 开始插入空格 重新组装数据
+                                for (int i = blankNum; i > 0 ; i--) {
+                                    int copyIndex = blankNum - i;
+
+                                    stringBuffer.append( chars[copyIndex * 2] ).append(chars[copyIndex * 2 + 1]).append(' ');
+                                }
+
+                                source = stringBuffer.toString().trim();
+
+                            }else{
+                                source = stringBuffer.append(source);
+                            }
+
                         }
 
-                        // 为了保证16进制的工整, 转换为大写
-                        source = source.toString().toUpperCase();
+
+
+
                         SuLogUtils.e("改变后 "+source);
 
                         return source;
@@ -60,7 +119,7 @@ public class EditTextUtil {
 
                     @Override
                     protected char[] getAcceptedChars() {
-                        char[] chars = "1234567890ABCDEF".toCharArray();
+                        char[] chars = "1234567890ABCDEF ".toCharArray();
                         return chars;
                     }
                 });
