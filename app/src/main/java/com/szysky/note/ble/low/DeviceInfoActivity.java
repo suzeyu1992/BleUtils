@@ -132,6 +132,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
             mBluetoothLeService = null;
         }
     };
+
     // If a given GATT characteristic is selected, check for supported features.  This sample
     // demonstrates 'Read' and 'Notify' features.  See
     // http://d.android.com/reference/android/bluetooth/BluetoothGatt.html for the complete

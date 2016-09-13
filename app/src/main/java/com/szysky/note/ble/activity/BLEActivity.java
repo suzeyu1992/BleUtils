@@ -1,10 +1,9 @@
-package com.szysky.note.ble;
+package com.szysky.note.ble.activity;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,6 +24,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.szysky.note.ble.R;
 import com.szysky.note.ble.db.ScanDeviceInfoBean;
 import com.szysky.note.ble.low.DeviceInfoActivity;
 import com.szysky.note.ble.util.ComputerUtils;
@@ -34,9 +34,9 @@ import java.util.HashMap;
 import java.util.Set;
 
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class BLEActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = BLEActivity.class.getSimpleName();
     private Handler mHandler = new MyHandler();
 
 
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         public LeDeviceListAdapter() {
             super();
             mLeDevices = new ArrayList<ScanDeviceInfoBean>();
-            mInflator = MainActivity.this.getLayoutInflater();
+            mInflator = BLEActivity.this.getLayoutInflater();
         }
 
         public void addDevice(ScanDeviceInfoBean  devicesInfo) {

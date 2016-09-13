@@ -1,7 +1,9 @@
 package com.szysky.note.ble.demo;
 
 import android.app.Activity;
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -9,6 +11,12 @@ import android.widget.Toast;
 
 import com.szysky.note.ble.R;
 import com.szysky.note.ble.view.MyExpandableListAdapter;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.StringReader;
 
 import static com.szysky.note.ble.R.id.parent;
 
@@ -53,6 +61,7 @@ public class ExpandableTest extends Activity{
          * setOnGroupCollapseListener   还可以设置分组合并监听
          * setOnGroupExpandListener     还可以设置分组展开监听
          */
+
 
 
 
