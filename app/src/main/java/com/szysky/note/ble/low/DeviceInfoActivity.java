@@ -22,6 +22,7 @@ import android.widget.ExpandableListView;
 import android.widget.PopupWindow;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.szysky.note.ble.R;
 import com.szysky.note.ble.util.ComputerUtils;
@@ -154,56 +155,21 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
                 @Override
                 public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
                                             int childPosition, long id) {
-                    displayPopup();
+
 
                     if (mGattCharacteristics != null) {
                         final BluetoothGattCharacteristic characteristic = mGattCharacteristics.get(groupPosition).get(childPosition);
                         final int charaProp = characteristic.getProperties();
 
+                        displayPopup(characteristic);
+
                         SuLogUtils.e("获取的特征属性值:"+charaProp);
-                        if ((charaProp == 16)){
-                            // 测试这里是读通道
-                            // 准备添加描述
-                            // 获得返回数据通道的 描述对象
-                            BluetoothGattDescriptor desc = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"));
-
-                            // 对读通道开始进行监听
-                            mBluetoothLeService.setCharacteristicNotification(characteristic, true);
-
-                            // 设置特征的描述 并写入描述
-                            desc.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                            mBluetoothLeService.mBluetoothGatt.writeDescriptor(desc);
-
-                            mNotifyCharacteristic = characteristic;
 
 
 
 
-                        }else{
-                            // 对180写通道进行 进行第一次echo检测
-                            byte[] bytes = {2, 1, 0, 1, 0, 1, 0, 0, 3, 3};
-                            characteristic.setValue(bytes);
-                            mBluetoothLeService.mBluetoothGatt.writeCharacteristic(characteristic);
-
-                        }
 
 
-                        if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
-                            // If there is an active notification on a characteristic, clear
-                            // it first so it doesn't update the data field on the user interface.
-                            if (mNotifyCharacteristic != null) {
-//                                mBluetoothLeService.setCharacteristicNotification(mNotifyCharacteristic, false);
-//                                mNotifyCharacteristic = null;
-                            }
-
-//                            mBluetoothLeService.readCharacteristic(characteristic);
-
-                        }
-                        if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
-//                            mNotifyCharacteristic = characteristic;
-//                            mBluetoothLeService.setCharacteristicNotification(characteristic, true);
-
-                        }
                         return true;
                     }
                     return false;
@@ -361,7 +327,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
-    public void displayPopup() {
+    public void displayPopup(BluetoothGattCharacteristic characteristic) {
 
         View popupup_check_image = getLayoutInflater().inflate(R.layout.popup_check_function, null);
         initPopup(popupup_check_image);
@@ -377,9 +343,11 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
         getWindow().setAttributes(lp);
 
         TextView checkFunWrite = (TextView) popupup_check_image.findViewById(R.id.tv_check_write);
+        checkFunWrite.setTag(characteristic);
         checkFunWrite.setOnClickListener(this);
 
         TextView checkFunNotify = (TextView) popupup_check_image.findViewById(R.id.tv_check_notify);
+        checkFunNotify.setTag(characteristic);
         checkFunNotify.setOnClickListener(this);
 
     }
@@ -402,8 +370,52 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
 
                 break;
 
-            //点击取消按钮关闭popupwindow弹窗
+            //点击取消按钮关闭popupWindow弹窗
             case R.id.tv_check_cancel:
+                mPopupWindow.dismiss();
+                break;
+
+            // 对特征进行通道notify监听
+            case R.id.tv_check_notify:
+                // 获取点击的特征实例
+                BluetoothGattCharacteristic characteristic = (BluetoothGattCharacteristic) v.getTag();
+                // 获得特征的属性值
+                int properties = characteristic.getProperties();
+
+                // 对监听特征进行描述(description)的数据写入
+                if ((properties != 16)) {
+                    Toast.makeText(getApplicationContext(),"此特种可能不支持监听", Toast.LENGTH_SHORT).show();
+                }
+
+                // 获取特征的描述对象
+                BluetoothGattDescriptor desc = characteristic.getDescriptor(UUID.fromString(SampleGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
+
+
+                // 设置特征的描述 并设置并写入描述
+                desc.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                mBluetoothLeService.mBluetoothGatt.writeDescriptor(desc);
+
+                mNotifyCharacteristic = characteristic;
+
+                // 对读通道开始进行监听
+                mBluetoothLeService.setCharacteristicNotification(characteristic, true);
+
+                mPopupWindow.dismiss();
+                break;
+
+            // 对写通道写入数据
+            case R.id.tv_check_write:
+
+
+
+
+                // 获取点击的特征实例
+                BluetoothGattCharacteristic characteristicWrite = (BluetoothGattCharacteristic) v.getTag();
+                // 对180写通道进行 进行第一次echo检测
+                byte[] bytes = {2, 1, 0, 1, 0, 1, 0, 0, 3, 3};
+                characteristicWrite.setValue(bytes);
+                mBluetoothLeService.mBluetoothGatt.writeCharacteristic(characteristicWrite);
+
                 mPopupWindow.dismiss();
                 break;
         }
