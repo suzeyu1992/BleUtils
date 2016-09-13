@@ -20,6 +20,7 @@ import com.szysky.note.ble.R;
 import com.szysky.note.ble.util.EditTextUtil;
 import com.szysky.note.ble.util.SuLogUtils;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,6 +60,32 @@ public class CharacteristicDataSendActivity extends AppCompatActivity implements
 
         // 设置EditText的输入模式
         EditTextUtil.setEditTextDisplayAndFilter(16, mSendDataEditText);
+
+        mSendDataEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // 用于处理删除动作时候如果遇到空格, 那么就手动删除空格的角标-1的元素
+                int length = s.toString().length();
+                if (length > 2){
+                    boolean equals = s.toString().substring(length - 1, length).equals(" ");
+                    if (equals){
+                        s.delete(length-1, length);
+
+                    }
+                }
+
+            }
+        });
 
     }
 
