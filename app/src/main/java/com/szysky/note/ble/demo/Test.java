@@ -23,19 +23,19 @@ public class Test {
         }
 
 
-        String pattern = "[0-9]+";
+        String pattern = "[^0-9a-fA-F]+";
 
         //  创建 Pattern 实例对象
         Pattern compile = Pattern.compile(pattern);
 
-        Matcher matcher = compile.matcher("aaaaaa");
+        Matcher matcher = compile.matcher("qqqa123aaaaaAqqqqqaaaaa");
 
         boolean b = matcher.find();
-        if (b){
-        }
-        System.out.println("find匹配结果 "+b);
+
+        System.out.println("find匹配结果 "+b +"     start:"+matcher.start()+ "      end:"+matcher.end());
         boolean matches = matcher.matches();
-        System.out.println("matches匹配结果 "+b);
+        System.out.println("matches匹配结果 "+matches);
+        System.out.println("替换不匹配的 "+matcher.replaceAll(""));
 
 
     }

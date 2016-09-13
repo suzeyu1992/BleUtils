@@ -1,10 +1,13 @@
 package com.szysky.note.ble.activity;
 
+import android.opengl.ETC1;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
@@ -14,7 +17,11 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.szysky.note.ble.R;
+import com.szysky.note.ble.util.EditTextUtil;
 import com.szysky.note.ble.util.SuLogUtils;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Author :  suzeyu
@@ -34,6 +41,7 @@ public class CharacteristicDataSendActivity extends AppCompatActivity implements
     private Button mSetupHexButton;
 
     public boolean mCurrentDataTypeIsHex = true;
+    private EditText mSendDataEditText;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,7 +49,7 @@ public class CharacteristicDataSendActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_data_send);
 
         // 找到需要的控件
-        EditText sendDataEditText = (EditText) findViewById(R.id.et_data_transmission);
+        mSendDataEditText = (EditText) findViewById(R.id.et_data_transmission);
         mSetupBinaryButton = (Button) findViewById(R.id.btn_write_type_binary);
         mSetupHexButton = (Button) findViewById(R.id.btn_write_type_hex);
 
@@ -49,52 +57,12 @@ public class CharacteristicDataSendActivity extends AppCompatActivity implements
         mSetupBinaryButton.setOnClickListener(this);
         mSetupHexButton.setOnClickListener(this);
 
-        sendDataEditText.addTextChangedListener(new TextWatcher() {
-            int count = 0;
-            int start = 0;
-            int before = 0;
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-//                SuLogUtils.d("before  "+s.toString()+"   start:"+start+"     after"+after+"        count"+count);
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-//                SuLogUtils.d("onTextChanged  "+s.toString()+"   start:"+start+"     before"+before+"        count"+count);
-                this.count = count;
-                this.start = start;
-                this.before = before;
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                SuLogUtils.d("afterTextChanged  "+s.toString());
-
-
-
-
-            }
-        });
-
-//        sendDataEditText.setKeyListener(new DigitsKeyListener() {
-//            @Override
-//            public int getInputType() {
-//                return InputType.TYPE_CLASS_NUMBER;
-//            }
-//
-//            @Override
-//            protected char[] getAcceptedChars() {
-//                char[] chars = "1234567890".toCharArray();
-//                return chars;
-//            }
-//        });
-
-
+        // 设置EditText的输入模式
+        EditTextUtil.setEditTextDisplayAndFilter(16, mSendDataEditText);
 
     }
+
+
 
     @Override
     public void onClick(View v) {
@@ -105,6 +73,8 @@ public class CharacteristicDataSendActivity extends AppCompatActivity implements
                 mSetupBinaryButton.setEnabled(true);
                 v.setEnabled(false);
                 mCurrentDataTypeIsHex = true;
+
+                EditTextUtil.setEditTextDisplayAndFilter(16, mSendDataEditText);
 
 
                 Toast.makeText(getApplicationContext(), "设置十六进制输入模式", Toast.LENGTH_SHORT).show();
@@ -118,6 +88,8 @@ public class CharacteristicDataSendActivity extends AppCompatActivity implements
                 mSetupHexButton.setEnabled(true);
                 v.setEnabled(false);
                 mCurrentDataTypeIsHex = false;
+
+                EditTextUtil.setEditTextDisplayAndFilter(2, mSendDataEditText);
 
 
                 Toast.makeText(getApplicationContext(), "设置二进制输入模式", Toast.LENGTH_SHORT).show();

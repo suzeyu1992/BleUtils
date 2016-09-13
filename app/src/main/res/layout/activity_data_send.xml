@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_margin="10dp"
+        android:inputType="textCapCharacters"
         android:background="@color/su_red"/>
 
     <LinearLayout
