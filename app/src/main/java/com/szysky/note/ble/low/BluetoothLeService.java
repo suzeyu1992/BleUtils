@@ -18,6 +18,7 @@ import android.util.Log;
 
 import com.szysky.note.ble.util.SampleGattAttributes;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -103,7 +104,7 @@ public class BluetoothLeService extends Service {
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
-            Log.w("susu", "read " + byts2str(characteristic.getValue()));
+            Log.d("sususu", "read " + byts2str(characteristic.getValue()));
 
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
@@ -113,7 +114,7 @@ public class BluetoothLeService extends Service {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
-            Log.w("susu", "changed "+(++count)+"次: " + characteristic.getValue().toString());
+            Log.d("sususu", "changed "+(++count)+"次: " + Arrays.toString(characteristic.getValue()));
 
             broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
         }
@@ -121,9 +122,18 @@ public class BluetoothLeService extends Service {
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
-            Log.d("susu", "write " + characteristic.getUuid()+" 写入的:"+byts2str(characteristic.getValue()));
+            Log.d("sususu", "write " + characteristic.getUuid()+" 写入的:"+byts2str(characteristic.getValue()));
 //            BluetoothGattDescriptor descriptor = characteristic.getDescriptor(UUID_descriptor);
 //            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+
+           
+
+        }
+
+        @Override
+        public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+            super.onDescriptorWrite(gatt, descriptor, status);
+            Log.d("sususu", "description " + descriptor.getUuid()+" 写入的:"+byts2str(descriptor.getValue()));
 
         }
     };

@@ -10,6 +10,8 @@ import com.szysky.note.ble.demo.ExpandableTest;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    public static boolean DEBUG = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

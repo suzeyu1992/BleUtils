@@ -2,6 +2,7 @@ package com.szysky.note.ble.low;
 
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -21,10 +22,12 @@ import android.widget.TextView;
 import com.szysky.note.ble.R;
 import com.szysky.note.ble.util.ComputerUtils;
 import com.szysky.note.ble.util.SampleGattAttributes;
+import com.szysky.note.ble.util.SuLogUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Author : suzeyu
@@ -143,9 +146,37 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
                 public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
                                             int childPosition, long id) {
                     if (mGattCharacteristics != null) {
-                        final BluetoothGattCharacteristic characteristic =
-                                mGattCharacteristics.get(groupPosition).get(childPosition);
+                        final BluetoothGattCharacteristic characteristic = mGattCharacteristics.get(groupPosition).get(childPosition);
                         final int charaProp = characteristic.getProperties();
+
+                        SuLogUtils.e("获取的特征属性值:"+charaProp);
+                        if ((charaProp == 16)){
+                            // 测试这里是读通道
+                            // 准备添加描述
+                            // 获得返回数据通道的 描述对象
+                            BluetoothGattDescriptor desc = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"));
+
+                            // 对读通道开始进行监听
+                            mBluetoothLeService.setCharacteristicNotification(characteristic, true);
+
+                            // 设置特征的描述 并写入描述
+                            desc.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                            mBluetoothLeService.mBluetoothGatt.writeDescriptor(desc);
+
+                            mNotifyCharacteristic = characteristic;
+
+
+
+
+                        }else{
+                            // 对180写通道进行 进行第一次echo检测
+                            byte[] bytes = {2, 1, 0, 1, 0, 1, 0, 0, 3, 3};
+                            characteristic.setValue(bytes);
+                            mBluetoothLeService.mBluetoothGatt.writeCharacteristic(characteristic);
+
+                        }
+
+
                         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
                             // If there is an active notification on a characteristic, clear
                             // it first so it doesn't update the data field on the user interface.
@@ -154,19 +185,20 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
 //                                mNotifyCharacteristic = null;
                             }
 
-                            mBluetoothLeService.readCharacteristic(characteristic);
-                            mBluetoothLeService.readCharacteristic(characteristic);
-                            mBluetoothLeService.readCharacteristic(characteristic);
+//                            mBluetoothLeService.readCharacteristic(characteristic);
+
                         }
                         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
-                            mNotifyCharacteristic = characteristic;
-                            mBluetoothLeService.setCharacteristicNotification(characteristic, true);
+//                            mNotifyCharacteristic = characteristic;
+//                            mBluetoothLeService.setCharacteristicNotification(characteristic, true);
 
                         }
                         return true;
                     }
                     return false;
                 }
+
+
             };
 
 

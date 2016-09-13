@@ -75,6 +75,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter{
         GroupViewHolder groupViewHolder;
         if (convertView == null) {
             convertView = new TextView(mContent);
+            convertView.setBackgroundColor(mContent.getResources().getColor(android.support.v7.appcompat.R.color.material_blue_grey_800));
             groupViewHolder = new GroupViewHolder();
             groupViewHolder.tvTitle = (TextView) convertView;
             convertView.setTag(groupViewHolder);
@@ -91,13 +92,15 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter{
         ChildViewHolder childViewHolder;
         if (convertView == null) {
             convertView = new TextView(mContent);
+            convertView.setBackgroundColor(mContent.getResources().getColor(android.R.color.holo_orange_light));
+
             childViewHolder = new ChildViewHolder();
             childViewHolder.tvTitle = (TextView) convertView;
             convertView.setTag(childViewHolder);
         } else {
             childViewHolder = (ChildViewHolder) convertView.getTag();
         }
-        childViewHolder.tvTitle.setText(mChildStrings[groupPosition][childPosition]);
+        childViewHolder.tvTitle.setText("   "+mChildStrings[groupPosition][childPosition]);
         return convertView;
     }
 

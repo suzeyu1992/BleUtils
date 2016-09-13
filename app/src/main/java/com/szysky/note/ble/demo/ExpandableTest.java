@@ -48,14 +48,14 @@ public class ExpandableTest extends Activity{
             }});
 
 //        设置子选项点击监听事件
-            elv_main.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        elv_main.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 
-                @Override
-                public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                    Toast.makeText(getApplicationContext(), groupPosition+" "+childPosition, Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-            });
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Toast.makeText(getApplicationContext(), groupPosition+" "+childPosition, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
 
         /**
          * setOnGroupCollapseListener   还可以设置分组合并监听
