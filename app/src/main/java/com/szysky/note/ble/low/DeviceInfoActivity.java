@@ -14,8 +14,12 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.menu.MenuAdapter;
+import android.support.v7.view.menu.MenuBuilder;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ExpandableListView;
@@ -56,7 +60,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
      */
     private String mDeviceName, mDeviceAddress;
     private ExpandableListView mGattServicesList;
-    private TextView mDataField, tv_operate, mConnectionState;
+    private TextView mDataField, mConnectionState;
 
     /**
      * listView的Item名称
@@ -81,6 +85,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
      * 要准备发送的特征, 只有在点击item并点击写入数据调转页面的时候 此值才不为null
      */
     private BluetoothGattCharacteristic mPrepareCharacteristic;
+    private MenuItem mCurrentMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,8 +103,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
         mGattServicesList.setOnChildClickListener(servicesListClickListner);
         mConnectionState = (TextView) findViewById(R.id.connection_state);
         mDataField = (TextView) findViewById(R.id.data_value);
-        tv_operate = (TextView) findViewById(R.id.tv_operate);
-        tv_operate.setOnClickListener(this);
+
 
         getSupportActionBar().setTitle(mDeviceName);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -135,6 +139,34 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
         mBluetoothLeService = null;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.connection_ble, menu);
+        mCurrentMenu = menu.findItem(R.id.menu_connection_ble);
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_connection_ble:
+
+                // 进行设备的连接和断开的按钮
+                if (mConnected) {
+                    mConnected = false;
+                    mBluetoothLeService.disconnect();
+                    mBluetoothLeService.close();
+                } else {
+                    mConnected = true;
+                    mBluetoothLeService.connect(mDeviceAddress);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -221,7 +253,11 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void run() {
                 mConnectionState.setText(strBody);
-                tv_operate.setText(strBody);
+                if (mCurrentMenu != null){
+                    mCurrentMenu.setTitle(strBody);
+                }
+
+
             }
         });
     }
@@ -420,18 +456,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tv_operate:
-                // 进行设备的连接和断开的按钮
-                if (mConnected) {
-                    mConnected = false;
-                    mBluetoothLeService.disconnect();
-                    mBluetoothLeService.close();
-                } else {
-                    mConnected = true;
-                    mBluetoothLeService.connect(mDeviceAddress);
-                }
 
-                break;
 
             //点击取消按钮关闭popupWindow弹窗
             case R.id.tv_check_cancel:
