@@ -46,7 +46,7 @@ public class CharacteristicDataSendActivity extends AppCompatActivity implements
      * 用于界面返回数据Intent中的而一个标志位.
      *  代表要发送数据数组的键名
      */
-    private static final String RESULT_SEND_DATA = "data_send";
+    public static final String RESULT_SEND_DATA = "data_send";
     /**
      *  设置EditText框输入内容的所使用的格式 (例如是十六进制还是二级制)
      */

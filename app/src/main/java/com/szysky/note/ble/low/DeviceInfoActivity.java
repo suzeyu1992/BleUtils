@@ -25,30 +25,36 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.szysky.note.ble.R;
+import com.szysky.note.ble.activity.CharacteristicDataSendActivity;
 import com.szysky.note.ble.util.ComputerUtils;
 import com.szysky.note.ble.util.SampleGattAttributes;
 import com.szysky.note.ble.util.SuLogUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.prefs.PreferenceChangeEvent;
 
 /**
  * Author : suzeyu
  * Time   : 16/8/19  下午5:09
  * Blog   : http://szysky.com
  * GitHub : https://github.com/suzeyu1992
- *
+ * <p>
  * ClassDescription : 根据获取的设备
- *
  */
 public class DeviceInfoActivity extends AppCompatActivity implements View.OnClickListener {
 
     /**
+     * 打开界面的请求码
+     */
+    private static final int REQUEST_CODE_EDIT_DATA = 0x60;
+    /**
      * 蓝牙设备信息
      */
-    private String mDeviceName, mDeviceAddress ;
+    private String mDeviceName, mDeviceAddress;
     private ExpandableListView mGattServicesList;
     private TextView mDataField, tv_operate, mConnectionState;
 
@@ -70,6 +76,11 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
      * 对类中进行选择操作的 弹出窗口
      */
     private PopupWindow mPopupWindow;
+
+    /**
+     * 要准备发送的特征, 只有在点击item并点击写入数据调转页面的时候 此值才不为null
+     */
+    private BluetoothGattCharacteristic mPrepareCharacteristic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,34 +107,33 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
 
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+
+        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        if (mBluetoothLeService != null) {
+            final boolean result = mBluetoothLeService.connect(mDeviceAddress);
+        }
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
-        if (mBluetoothLeService != null) {
-            final boolean result = mBluetoothLeService.connect(mDeviceAddress);
-            Log.d(ComputerUtils.TAG, "Connect request result=haha" + result);
-        }
+
     }
 
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(mGattUpdateReceiver);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(mGattUpdateReceiver);
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
     }
-
-
 
 
     // Code to manage Service lifecycle.
@@ -163,11 +173,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
 
                         displayPopup(characteristic);
 
-                        SuLogUtils.e("获取的特征属性值:"+charaProp);
-
-
-
-
+                        SuLogUtils.e("获取的特征属性值:" + charaProp);
 
 
                         return true;
@@ -278,12 +284,12 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
                 this,
                 gattServiceData,
                 android.R.layout.simple_expandable_list_item_2,
-                new String[] {LIST_NAME, LIST_UUID},
-                new int[] { android.R.id.text1, android.R.id.text2 },
+                new String[]{LIST_NAME, LIST_UUID},
+                new int[]{android.R.id.text1, android.R.id.text2},
                 gattCharacteristicData,
                 android.R.layout.simple_expandable_list_item_2,
-                new String[] {LIST_NAME, LIST_UUID},
-                new int[] { android.R.id.text1, android.R.id.text2 }
+                new String[]{LIST_NAME, LIST_UUID},
+                new int[]{android.R.id.text1, android.R.id.text2}
         );
         mGattServicesList.setAdapter(gattServiceAdapter);
     }
@@ -304,7 +310,6 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
 
     /**
      * 封装一个创建popup的方法 只需接收一个layout布局对象
-     *
      */
     private void initPopup(View replace_popup) {
 
@@ -353,17 +358,75 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
     }
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_EDIT_DATA:
+                if (data == null) return;
+
+                byte[] byteArrayExtra = data.getByteArrayExtra(CharacteristicDataSendActivity.RESULT_SEND_DATA);
+                if (byteArrayExtra == null || byteArrayExtra.length == 0) {
+                    Toast.makeText(getApplicationContext(), "获取发送数据失败!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // 开始处理返回来的字节数组并发送
+                mPrepareCharacteristic.setValue(byteArrayExtra);
+                mBluetoothLeService.mBluetoothGatt.writeCharacteristic(mPrepareCharacteristic);
+                mPrepareCharacteristic = null;
+
+
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    // 测试数据 无需关心
+    public static ArrayList<byte[]> OsendArrs = new ArrayList<>();
+
+    static {
+        OsendArrs.add(new byte[]{2, 1, 0, 1, 0, 1, 0, 0, 3, 3});
+        OsendArrs.add(new byte[]{2, 1, 3, -24, 0, 1, 0, 8, 126, 17, 0, 0, 0, 0, -1, -1, -114, 3});
+        OsendArrs.add(new byte[]{2, 1, 0, 0, 0, 5, 0, 1, 6, 1, 3});
+        OsendArrs.add(new byte[]{2, 1, 0, 0, 0, 6, 0, 1, 6, 2, 3});
+        OsendArrs.add(new byte[]{2, 1, 0, 0, 0, 7, 0, 1, 6, 3, 3});
+        OsendArrs.add(new byte[]{2, 1, 0, 0, 0, 8, 0, 1, 6, 12, 3});
+        OsendArrs.add(new byte[]{2, 1, 0, 0, 0, 9, 0, 1, 6, 13, 3});
+        OsendArrs.add(new byte[]{2, 1, 0, 0, 0, 10, 0, 1, 6, 14, 3});
+        OsendArrs.add(new byte[]{2, 1, 0, 0, 0, 11, 0, 1, 6, 15, 3});
+        OsendArrs.add(new byte[]{2, 1, 0, 0, 0, 12, 0, 1, 6, 8, 3});
+        OsendArrs.add(new byte[]{2, 1, 0, 0, 0, 1, 0, 1, 6, 5, 3});
+        OsendArrs.add(new byte[]{2, 1, 3, -23, 0, 1, 0, 10, 126, -124, 0, 0, 0, 67, 116, 109, 107, 73, 96, 23});
+        OsendArrs.add(new byte[]{2, 1, 3, -23, 0, 2, 0, 10, 100, 120, 61, 49, 124, 107, 101, 121, 84, 121, -41, 23});
+        OsendArrs.add(new byte[]{2, 1, 0, 1, 0, 1, 0, 0, 3, 3});
+        OsendArrs.add(new byte[]{2, 1, 3, -24, 0, 1, 0, 10, 126, -124, 0, 0, 0, 67, 116, 109, 107, 73, 97, 23});
+        OsendArrs.add(new byte[]{2, 1, 3, -24, 0, 2, 0, 10, 100, 120, 61, 49, 124, 107, 101, 121, 84, 121, -42, 23});
+        OsendArrs.add(new byte[]{2, 1, 3, -24, 0, 3, 0, 10, 112, 101, 61, 84, 68, 75, 124, 107, 101, 121, -103, 23});
+        OsendArrs.add(new byte[]{2, 1, 3, -24, 0, 4, 0, 10, 68, 97, 116, 97, 61, 67, 65, 48, 54, 70, -87, 23});
+        OsendArrs.add(new byte[]{2, 1, 3, -24, 0, 5, 0, 10, 57, 50, 53, 70, 68, 54, 66, 68, 69, 56, -106, 23});
+        OsendArrs.add(new byte[]{2, 1, 3, -24, 0, 6, 0, 10, 48, 65, 54, 49, 48, 56, 51, 52, 48, 55, -102, 23});
+        OsendArrs.add(new byte[]{2, 1, 3, -24, 0, 7, 0, 10, 70, 57, 68, 54, 51, 69, 55, 52, 67, 66, -100, 23});
+        OsendArrs.add(new byte[]{2, 1, 3, -24, 0, 8, 0, 5, 69, 65, 52, -1, -1, -43, 3});
+        OsendArrs.add(new byte[]{2, 1, 0, 0, 0, 1, 0, 1, 6, 5, 3});
+        OsendArrs.add(new byte[]{2, 1, 3, -23, 0, 1, 0, 10, 126, -122, 0, 0, 0, 44, 99, 97, 114, 100, 34, 23});
+        OsendArrs.add(new byte[]{2, 1, 3, -23, 0, 2, 0, 10, 84, 121, 112, 101, 61, 83, 73, 67, 124, 97, -96, 23});
+        OsendArrs.add(new byte[]{2, 1, 3, -23, 0, 3, 0, 10, 109, 111, 117, 110, 116, 61, 48, 48, 48, 48, -80, 23});
+        OsendArrs.add(new byte[]{2, 1, 3, -23, 0, 4, 0, 10, 48, 48, 48, 48, 49, 48, 48, 48, 124, 116, -18, 23});
+        OsendArrs.add(new byte[]{2, 1, 3, -23, 0, 5, 0, 10, 105, 109, 101, 111, 117, 116, 61, 51, 48, 48, -25, 23});
+        OsendArrs.add(new byte[]{2, 1, 3, -23, 0, 6, 0, 2, -1, -1, -19, 3});
+    }
+
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.tv_operate:
                 // 进行设备的连接和断开的按钮
-                if (mConnected){
+                if (mConnected) {
                     mConnected = false;
                     mBluetoothLeService.disconnect();
                     mBluetoothLeService.close();
-                }else{
+                } else {
                     mConnected = true;
                     mBluetoothLeService.connect(mDeviceAddress);
                 }
@@ -384,7 +447,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
 
                 // 对监听特征进行描述(description)的数据写入
                 if ((properties != 16)) {
-                    Toast.makeText(getApplicationContext(),"此特种可能不支持监听", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "此特种可能不支持监听", Toast.LENGTH_SHORT).show();
                 }
 
                 // 获取特征的描述对象
@@ -406,14 +469,12 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
             // 对写通道写入数据
             case R.id.tv_check_write:
 
-                
+                // 先保存要发送的特征
+                mPrepareCharacteristic = (BluetoothGattCharacteristic) v.getTag();
 
-                // 获取点击的特征实例
-                BluetoothGattCharacteristic characteristicWrite = (BluetoothGattCharacteristic) v.getTag();
-                // 对180写通道进行 进行第一次echo检测
-                byte[] bytes = {2, 1, 0, 1, 0, 1, 0, 0, 3, 3};
-                characteristicWrite.setValue(bytes);
-                mBluetoothLeService.mBluetoothGatt.writeCharacteristic(characteristicWrite);
+                Intent intent = new Intent(getApplicationContext(), CharacteristicDataSendActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_EDIT_DATA);
+
 
                 mPopupWindow.dismiss();
                 break;
