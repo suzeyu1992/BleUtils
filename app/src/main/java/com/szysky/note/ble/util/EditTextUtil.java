@@ -222,4 +222,62 @@ public class EditTextUtil {
         return sb.toString();
 
     }
+
+    /**
+     * 十进制字符串转换为16进制字符串
+     */
+    public static String decimal2Hex(String decimalStr){
+
+        // 首先过滤掉字符串中非10进制的字符, 可以包括分隔符(英文输入下的.)
+        Pattern compile = Pattern.compile("[^0-9\\.]+");
+        Matcher matcher = compile.matcher(decimalStr);
+        decimalStr = matcher.replaceAll("");
+
+        // 针对字符串中'1..2'进行处理 遇到'..'变为'.'
+//        compile = Pattern.compile("[\\.]{2,}");     // 至少匹配'.'连续出现的次数为两次
+//        matcher = compile.matcher(decimalStr);
+//        decimalStr = matcher.replaceAll(".");
+
+
+
+        String[] split = decimalStr.split("\\.");
+        if(split.length == 0){
+            split = new String[]{decimalStr};
+        }
+
+        // 创建一个存储转换完成的容器
+        StringBuffer sb = new StringBuffer();
+
+        for (int i = 0; i < split.length; i++) {
+
+            // 判断如果分割的数组内是空元素, 那么就添加00
+            if (split[i].length() == 0){
+                sb.append("00 ");
+                continue;
+            }
+
+            int convertInt = (Integer.parseInt((split[i].length() > 9 ? "255" : split[i]))) % 255;
+            String s = "";
+
+            if (convertInt < 16){
+                s =  "0"+Integer.toHexString(convertInt);
+            }else{
+                s =  Integer.toHexString(convertInt);
+
+            }
+
+            // 字符串对应的int数值小于16那么代表着是单数需要在前面添加 '0'
+
+            if (i == split.length-1){
+                sb.append(s);
+            }else{
+                sb.append(s).append(" ");
+            }
+        }
+
+        return sb.toString().toUpperCase();
+
+
+    }
+
 }

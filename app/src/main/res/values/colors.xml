@@ -5,8 +5,20 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="su_transparent">#00000000</color>
-    <!--文本字体颜色  深灰 中等-->
-    <color name="su_text_gray">#C7C7C7</color>
+
 
     <color name="su_red">#ff3e3e</color>
+
+    <!--背景色-->
+    <color name="su_bg_gray">#F4F6F8</color>
+    <!--线条色  分割线等-->
+    <color name="su_line">#e2e2e2</color>
+    <color name="su_white">#ffffff</color>
+    <!--文本字体颜色  纯黑 重度-->
+    <color name="su_text_black">#393939</color>
+    <!--文本字体颜色  深灰 中等-->
+    <color name="su_text_gray">#C7C7C7</color>
+    <!--文本字体颜色  浅灰 轻度-->
+    <color name="su_text_middle">#9EA8B1</color>
+
 </resources>

@@ -45,8 +45,20 @@ public class Test {
         String resultDecimal = EditTextUtil.hex2Decimal(hexStr);
         System.out.println("  十六进制: "+hexStr);
         System.out.println("转换十进制: "+resultDecimal);
-
         System.out.println("---------------------------------------------------------------------- ");
+
+
+
+        // 检测十进制转换十六进制
+        System.out.println("-------------------------------检测十进制转换十六进制--------------------------------------- ");
+        String decimalStr = "555.12.1.2.a.33. 44.16.17";
+        String resultHex = EditTextUtil.decimal2Hex(decimalStr);
+        System.out.println("    十进制: "+decimalStr);
+        System.out.println("转换十六进制: "+resultHex);
+        System.out.println("---------------------------------------------------------------------- ");
+
+
+
 
 
     }

@@ -2,20 +2,49 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@color/su_bg_gray"
     android:layout_height="match_parent">
+
+    <TextView
+        
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="12dp"
+        android:textSize="12dp"
+        android:textColor="@color/su_text_middle"
+        android:text="数据类型: 十六进制模式"/>
+
+    <include layout="@layout/layout_line_view" />
+
 
 
     <EditText
         android:id="@+id/et_data_transmission"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_margin="10dp"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
         android:inputType="textCapCharacters"
-        android:background="@color/su_red"/>
+        android:hint="输入要发送的数据"
+        android:textSize="20dp"
+        android:text="AA"
+        android:textColor="@color/su_text_black"
+        android:background="@color/su_white"/>
+    <include layout="@layout/layout_line_view" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/su_transparent"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:layout_marginBottom="20dp"
         android:orientation="horizontal">
         <Button
             android:id="@+id/btn_write_type_hex"
@@ -33,7 +62,7 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:layout_margin="10dp"
-            android:text="二进制" />
+            android:text="十进制" />
 
 
     </LinearLayout>

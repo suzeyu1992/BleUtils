@@ -96,20 +96,23 @@ public class CharacteristicDataSendActivity extends AppCompatActivity implements
         switch (v.getId()){
             // 十六进制按钮
             case R.id.btn_write_type_hex:
-                // 恢复二进制按钮, 并设置本身为不可点击状态
+                // 恢复十进制按钮, 并设置本身为不可点击状态
                 mSetupBinaryButton.setEnabled(true);
                 v.setEnabled(false);
                 mCurrentDataTypeIsHex = true;
 
                 EditTextUtil.setEditTextDisplayAndFilter(16, mSendDataEditText);
 
+                // 进行数据进制的转换
+                String convertStr = EditTextUtil.decimal2Hex(mSendDataEditText.getText().toString());
+                mSendDataEditText.setText(convertStr);
 
                 Toast.makeText(getApplicationContext(), "设置十六进制输入模式", Toast.LENGTH_SHORT).show();
 
                 break;
             
             
-            // 二进制按钮
+            // 十进制按钮
             case R.id.btn_write_type_binary:
                 // 恢复十六进制按钮, 并设置本身为不可点击状态
                 mSetupHexButton.setEnabled(true);
@@ -117,9 +120,12 @@ public class CharacteristicDataSendActivity extends AppCompatActivity implements
                 mCurrentDataTypeIsHex = false;
 
                 EditTextUtil.setEditTextDisplayAndFilter(2, mSendDataEditText);
+                // 进行数据进制的转换
+                String convertDecimalStr = EditTextUtil.hex2Decimal(mSendDataEditText.getText().toString());
+                mSendDataEditText.setText(convertDecimalStr);
 
 
-                Toast.makeText(getApplicationContext(), "设置二进制输入模式", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "设置十进制输入模式", Toast.LENGTH_SHORT).show();
 
                 break;
             
