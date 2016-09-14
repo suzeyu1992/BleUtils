@@ -8,6 +8,7 @@ import android.text.method.DigitsKeyListener;
 import android.widget.EditText;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -153,13 +154,72 @@ public class EditTextUtil {
 
                     @Override
                     protected char[] getAcceptedChars() {
-                        char[] chars = "1234567890,".toCharArray();
+                        char[] chars = "1234567890.".toCharArray();
                         return chars;
                     }
                 });
                 break;
         }
+    }
 
+    static {
+        HashMap<Integer, Integer> convertMap = new HashMap<>();
+
+        convertMap.put((int)'0', 0);
+        convertMap.put((int)'1', 1);
+        convertMap.put((int)'2', 2);
+        convertMap.put((int)'3', 3);
+        convertMap.put((int)'4', 4);
+        convertMap.put((int)'5', 5);
+        convertMap.put((int)'6', 6);
+        convertMap.put((int)'7', 7);
+        convertMap.put((int)'8', 8);
+        convertMap.put((int)'9', 9);
+        convertMap.put(65,10);
+        convertMap.put(66,11);
+        convertMap.put(67,12);
+        convertMap.put(68,13);
+        convertMap.put(69,14);
+        convertMap.put(70,15);
+    }
+
+    /**
+     *  把一个十六进制的字符串转换成十进制
+     */
+    public static String hex2Decimal(String hexStr){
+
+        // 首先过滤掉字符串中非16进制的字符, 可以包括分隔符(空格)
+        Pattern compile = Pattern.compile("[^0-9A-F\\s]+");
+        Matcher matcher = compile.matcher(hexStr.toUpperCase());
+        hexStr = matcher.replaceAll("");
+
+
+        // 利用每个字节中间的空格来进行字节分组
+        String[] split = hexStr.split(" ");
+
+        // 创建一个存储转换完成的容器
+        StringBuffer sb = new StringBuffer();
+
+        for (int i = 0; i < split.length; i++) {
+            // 先处理表示一个字节是一位十六进制的场景
+            if (split[i].length() == 1){
+                String singleChar = String.valueOf(split[i].toCharArray()[0]);
+                sb.append(Integer.parseInt(singleChar, 16)).append('.');
+            }else if (split[i].length()  == 2){
+                char[] doubleChars = split[i].toCharArray();
+
+
+                // 高位数字*16 加上低位数字, 表示成无符号的二进制, 当超过128(128为0)就为负数-127
+                int binaryInt =  (Integer.parseInt(String.valueOf(doubleChars[0]), 16)*16) + (Integer.parseInt(String.valueOf(doubleChars[1]), 16));
+                sb.append(binaryInt).append('.');
+            }
+
+            if ((i == split.length-1) && (sb.length()>0) && (sb.charAt(sb.length()-1)=='.' )){
+                sb.delete(sb.length()-1, sb.length());
+            }
+        }
+
+        return sb.toString();
 
     }
 }

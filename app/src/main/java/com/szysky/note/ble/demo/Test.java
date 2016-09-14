@@ -1,5 +1,7 @@
 package com.szysky.note.ble.demo;
 
+import com.szysky.note.ble.util.EditTextUtil;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +38,15 @@ public class Test {
         boolean matches = matcher.matches();
         System.out.println("matches匹配结果 "+matches);
         System.out.println("替换不匹配的 "+matcher.replaceAll(""));
+
+        // 检测十六进制转换十进制
+        System.out.println("-------------------------------检测十六进制转换十进制--------------------------------------- ");
+        String hexStr = "aa ee e d a c 3 5 11 ff 00 ";
+        String resultDecimal = EditTextUtil.hex2Decimal(hexStr);
+        System.out.println("  十六进制: "+hexStr);
+        System.out.println("转换十进制: "+resultDecimal);
+
+        System.out.println("---------------------------------------------------------------------- ");
 
 
     }
