@@ -31,6 +31,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter{
     private ArrayList<HashMap<String, String>> mGroupDataList;
     private ArrayList<ArrayList<HashMap<String, String>>> mChildDataList;
 
+    private final String LIST_NAME = "NAME", LIST_UUID = "UUID";
+
+
     public MyExpandableListAdapter(Context context){
         mContent = context;
     }
@@ -55,7 +58,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter{
     }
 
     public MyExpandableListAdapter(Context applicationContext, ArrayList<HashMap<String, String>> gattServiceData, ArrayList<ArrayList<HashMap<String, String>>> gattCharacteristicData) {
-        Toast.makeText(applicationContext, mChildStrings.length+"" , Toast.LENGTH_LONG).show();
         mContent = applicationContext;
         mGroupDataList = gattServiceData;
         mChildDataList = gattCharacteristicData;
@@ -69,7 +71,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter{
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return mChildDataList.size();
+        return mChildDataList.get(groupPosition).size();
     }
 
     @Override
@@ -115,12 +117,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter{
         }
         // 获取组数据
         HashMap<String, String> tempDataMap = mGroupDataList.get(groupPosition);
-        Set<String> keySet = tempDataMap.keySet();
-        for (String name : keySet) {
-            groupViewHolder.nameTextView.setText(name);
-            groupViewHolder.uuidTextView.setText(tempDataMap.get(name));
+        groupViewHolder.nameTextView.setText(tempDataMap.get(LIST_NAME));
+        groupViewHolder.uuidTextView.setText(tempDataMap.get(LIST_UUID));
 
-        }
 
 
         return convertView;
@@ -145,12 +144,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter{
 
         // 获取组数据
         HashMap<String, String> tempDataMap = mChildDataList.get(groupPosition).get(childPosition);
-//        Set<String> keySet = tempDataMap.keySet();
-//        for (String name : keySet) {
-//            childViewHolder.nameTextView.setText(name);
-//            childViewHolder.uuidTextView.setText(tempDataMap.get(name));
-//
-//        }
+
+        childViewHolder.nameTextView.setText(tempDataMap.get(LIST_NAME));
+        childViewHolder.uuidTextView.setText(tempDataMap.get(LIST_UUID));
+
+
 
 
         return convertView;

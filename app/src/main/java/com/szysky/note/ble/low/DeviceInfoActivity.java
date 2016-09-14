@@ -318,17 +318,17 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
         }
 
         MyExpandableListAdapter myExpandableListAdapter = new MyExpandableListAdapter(getApplicationContext(), gattServiceData, gattCharacteristicData);
-        SimpleExpandableListAdapter gattServiceAdapter = new SimpleExpandableListAdapter(
-                this,
-                gattServiceData,
-                android.R.layout.simple_expandable_list_item_2,
-                new String[]{LIST_NAME, LIST_UUID},
-                new int[]{android.R.id.text1, android.R.id.text2},
-                gattCharacteristicData,
-                android.R.layout.simple_expandable_list_item_2,
-                new String[]{LIST_NAME, LIST_UUID},
-                new int[]{android.R.id.text1, android.R.id.text2}
-        );
+//        SimpleExpandableListAdapter gattServiceAdapter = new SimpleExpandableListAdapter(
+//                this,
+//                gattServiceData,
+//                android.R.layout.simple_expandable_list_item_2,
+//                new String[]{LIST_NAME, LIST_UUID},
+//                new int[]{android.R.id.text1, android.R.id.text2},
+//                gattCharacteristicData,
+//                android.R.layout.simple_expandable_list_item_2,
+//                new String[]{LIST_NAME, LIST_UUID},
+//                new int[]{android.R.id.text1, android.R.id.text2}
+//        );
         mGattServicesList.setAdapter(myExpandableListAdapter);
     }
 
