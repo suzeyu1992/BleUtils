@@ -406,8 +406,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
             // 对写通道写入数据
             case R.id.tv_check_write:
 
-
-
+                
 
                 // 获取点击的特征实例
                 BluetoothGattCharacteristic characteristicWrite = (BluetoothGattCharacteristic) v.getTag();

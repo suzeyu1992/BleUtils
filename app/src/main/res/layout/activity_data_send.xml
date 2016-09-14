@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        
+        android:id="@+id/tv_display_data_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -27,10 +27,11 @@
         android:minHeight="48dp"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
-        android:inputType="textCapCharacters"
+        android:inputType="textMultiLine"
         android:hint="输入要发送的数据"
+
         android:textSize="20dp"
-        android:text="AA"
+        android:text=""
         android:textColor="@color/su_text_black"
         android:background="@color/su_white"/>
     <include layout="@layout/layout_line_view" />
@@ -39,30 +40,38 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@color/su_transparent"/>
+        android:background="@color/su_transparent"
+        android:id="@+id/view" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginBottom="20dp"
+        android:background="@color/su_bg_gray"
+
         android:orientation="horizontal">
-        <Button
+        <TextView
             android:id="@+id/btn_write_type_hex"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:layout_margin="10dp"
+            android:background="@mipmap/icon_btn_bg_blue"
             android:enabled="false"
-            android:text="十六进制" />
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:text="切换十六进制" />
 
 
-        <Button
+        <TextView
             android:id="@+id/btn_write_type_binary"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:layout_margin="10dp"
-            android:text="十进制" />
+            android:background="@mipmap/icon_btn_bg_blue"
+            android:gravity="center"
+            android:layout_margin="5dp"
+
+            android:text="切换十进制" />
 
 
     </LinearLayout>

@@ -228,6 +228,8 @@ public class EditTextUtil {
      */
     public static String decimal2Hex(String decimalStr){
 
+        if (decimalStr.length()==0)return "";
+
         // 首先过滤掉字符串中非10进制的字符, 可以包括分隔符(英文输入下的.)
         Pattern compile = Pattern.compile("[^0-9\\.]+");
         Matcher matcher = compile.matcher(decimalStr);
@@ -256,7 +258,8 @@ public class EditTextUtil {
                 continue;
             }
 
-            int convertInt = (Integer.parseInt((split[i].length() > 9 ? "255" : split[i]))) % 255;
+            int convertInt = (Integer.parseInt((split[i].length() > 9 ? "255" : split[i])))==255
+                    ? 255 : (Integer.parseInt((split[i].length() > 9 ? "255" : split[i]))) % 255;
             String s = "";
 
             if (convertInt < 16){
