@@ -2,6 +2,7 @@ package com.szysky.note.ble.demo;
 
 import android.app.Activity;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +39,7 @@ public class ExpandableTest extends Activity{
         ExpandableListView elv_main = (ExpandableListView) findViewById(R.id.elv_main);
 
         elv_main.setAdapter(new MyExpandableListAdapter(getApplicationContext()));
+        elv_main.setDivider(getDrawable(R.drawable.shape_line));
 
         //        设置分组项的点击监听事件
         elv_main.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {

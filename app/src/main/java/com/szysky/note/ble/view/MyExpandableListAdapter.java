@@ -1,11 +1,20 @@
 package com.szysky.note.ble.view;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.szysky.note.ble.R;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Author :  suzeyu
@@ -19,10 +28,14 @@ import android.widget.TextView;
 public class MyExpandableListAdapter extends BaseExpandableListAdapter{
 
     private final Context mContent;
+    private ArrayList<HashMap<String, String>> mGroupDataList;
+    private ArrayList<ArrayList<HashMap<String, String>>> mChildDataList;
 
     public MyExpandableListAdapter(Context context){
         mContent = context;
     }
+
+
 
 
     public String[] mGroupStrings = {"西游记", "水浒传", "三国演义", "红楼梦"};
@@ -32,24 +45,41 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter{
             {"曹操", "刘备", "孙权", "诸葛亮", "周瑜"},
             {"贾宝玉", "林黛玉", "薛宝钗", "王熙凤"}
     };
+
+
+
+    public MyExpandableListAdapter(Context context, String[] mGroupData , String[][] mChildData){
+        mContent = context;
+        mGroupStrings = mGroupData;
+        mChildStrings = mChildData;
+    }
+
+    public MyExpandableListAdapter(Context applicationContext, ArrayList<HashMap<String, String>> gattServiceData, ArrayList<ArrayList<HashMap<String, String>>> gattCharacteristicData) {
+        Toast.makeText(applicationContext, mChildStrings.length+"" , Toast.LENGTH_LONG).show();
+        mContent = applicationContext;
+        mGroupDataList = gattServiceData;
+        mChildDataList = gattCharacteristicData;
+
+    }
+
     @Override
     public int getGroupCount() {
-        return mGroupStrings.length;
+        return mGroupDataList.size();
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return mChildStrings.length;
+        return mChildDataList.size();
     }
 
     @Override
     public Object getGroup(int groupPosition) {
-        return mGroupStrings[groupPosition];
+        return mGroupDataList.get(groupPosition);
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return mChildStrings[groupPosition][childPosition];
+        return mChildDataList.get(groupPosition).get(childPosition);
     }
 
     @Override
@@ -74,15 +104,25 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter{
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         GroupViewHolder groupViewHolder;
         if (convertView == null) {
-            convertView = new TextView(mContent);
-            convertView.setBackgroundColor(mContent.getResources().getColor(android.support.v7.appcompat.R.color.material_blue_grey_800));
+            convertView = View.inflate(mContent, R.layout.expandable_item_group, null);
             groupViewHolder = new GroupViewHolder();
-            groupViewHolder.tvTitle = (TextView) convertView;
+            groupViewHolder.nameTextView = (TextView) convertView.findViewById(R.id.tv_group_name);
+            groupViewHolder.uuidTextView = (TextView) convertView.findViewById(R.id.tv_group_uuid);
+            groupViewHolder.newMessageImageView = (ImageView) convertView.findViewById(R.id.iv_group_new_message);
             convertView.setTag(groupViewHolder);
         } else {
             groupViewHolder = (GroupViewHolder) convertView.getTag();
         }
-        groupViewHolder.tvTitle.setText(mGroupStrings[groupPosition]);
+        // 获取组数据
+        HashMap<String, String> tempDataMap = mGroupDataList.get(groupPosition);
+        Set<String> keySet = tempDataMap.keySet();
+        for (String name : keySet) {
+            groupViewHolder.nameTextView.setText(name);
+            groupViewHolder.uuidTextView.setText(tempDataMap.get(name));
+
+        }
+
+
         return convertView;
     }
 
@@ -91,16 +131,28 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter{
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         ChildViewHolder childViewHolder;
         if (convertView == null) {
-            convertView = new TextView(mContent);
-            convertView.setBackgroundColor(mContent.getResources().getColor(android.R.color.holo_orange_light));
+//            convertView.setBackgroundColor(mContent.getResources().getColor(android.R.color.holo_orange_light));
 
+            convertView = View.inflate(mContent, R.layout.expandable_item_child, null);
             childViewHolder = new ChildViewHolder();
-            childViewHolder.tvTitle = (TextView) convertView;
+            childViewHolder.nameTextView = (TextView) convertView.findViewById(R.id.tv_child_name);
+            childViewHolder.uuidTextView = (TextView) convertView.findViewById(R.id.tv_child_uuid);
+            childViewHolder.newMessageImageView = (ImageView) convertView.findViewById(R.id.iv_child_new_message);
             convertView.setTag(childViewHolder);
         } else {
             childViewHolder = (ChildViewHolder) convertView.getTag();
         }
-        childViewHolder.tvTitle.setText("   "+mChildStrings[groupPosition][childPosition]);
+
+        // 获取组数据
+        HashMap<String, String> tempDataMap = mChildDataList.get(groupPosition).get(childPosition);
+//        Set<String> keySet = tempDataMap.keySet();
+//        for (String name : keySet) {
+//            childViewHolder.nameTextView.setText(name);
+//            childViewHolder.uuidTextView.setText(tempDataMap.get(name));
+//
+//        }
+
+
         return convertView;
     }
 
@@ -112,9 +164,14 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter{
 
 
     static class GroupViewHolder {
-        TextView tvTitle;
+        TextView nameTextView;
+        TextView uuidTextView;
+        ImageView newMessageImageView;
+
     }
     static class ChildViewHolder {
-        TextView tvTitle;
+        TextView nameTextView;
+        TextView uuidTextView;
+        ImageView newMessageImageView;
     }
 }

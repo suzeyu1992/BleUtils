@@ -33,6 +33,7 @@ import com.szysky.note.ble.activity.CharacteristicDataSendActivity;
 import com.szysky.note.ble.util.ComputerUtils;
 import com.szysky.note.ble.util.SampleGattAttributes;
 import com.szysky.note.ble.util.SuLogUtils;
+import com.szysky.note.ble.view.MyExpandableListAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -316,6 +317,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
             gattCharacteristicData.add(gattCharacteristicGroupData);
         }
 
+        MyExpandableListAdapter myExpandableListAdapter = new MyExpandableListAdapter(getApplicationContext(), gattServiceData, gattCharacteristicData);
         SimpleExpandableListAdapter gattServiceAdapter = new SimpleExpandableListAdapter(
                 this,
                 gattServiceData,
@@ -327,7 +329,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
                 new String[]{LIST_NAME, LIST_UUID},
                 new int[]{android.R.id.text1, android.R.id.text2}
         );
-        mGattServicesList.setAdapter(gattServiceAdapter);
+        mGattServicesList.setAdapter(myExpandableListAdapter);
     }
 
 
