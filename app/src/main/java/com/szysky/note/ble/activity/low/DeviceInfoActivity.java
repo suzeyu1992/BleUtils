@@ -1,7 +1,5 @@
-package com.szysky.note.ble.low;
+package com.szysky.note.ble.activity.low;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
@@ -14,8 +12,6 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.view.menu.MenuAdapter;
-import android.support.v7.view.menu.MenuBuilder;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -29,18 +25,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.szysky.note.ble.R;
-import com.szysky.note.ble.activity.CharacteristicDataSendActivity;
 import com.szysky.note.ble.util.ComputerUtils;
 import com.szysky.note.ble.util.SampleGattAttributes;
 import com.szysky.note.ble.util.SuLogUtils;
 import com.szysky.note.ble.view.MyExpandableListAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.prefs.PreferenceChangeEvent;
 
 /**
  * Author : suzeyu
@@ -177,6 +170,10 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
                     mBluetoothLeService.connect(mDeviceAddress);
                 }
                 lastClickOptionItemTime = System.currentTimeMillis();
+                return true;
+
+            case android.R.id.home:
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -1,4 +1,4 @@
-package com.szysky.note.ble.low;
+package com.szysky.note.ble.activity.low;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;

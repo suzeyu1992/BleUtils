@@ -1,4 +1,4 @@
-package com.szysky.note.ble.activity;
+package com.szysky.note.ble.activity.low;
 
 import android.app.Activity;
 import android.content.DialogInterface;

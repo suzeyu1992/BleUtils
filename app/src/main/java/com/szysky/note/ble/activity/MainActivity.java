@@ -7,11 +7,10 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.szysky.note.ble.R;
-import com.szysky.note.ble.demo.ExpandableTest;
+import com.szysky.note.ble.activity.low.BLEActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 

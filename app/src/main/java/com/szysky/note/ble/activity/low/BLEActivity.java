@@ -1,4 +1,4 @@
-package com.szysky.note.ble.activity;
+package com.szysky.note.ble.activity.low;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.szysky.note.ble.R;
 import com.szysky.note.ble.db.ScanDeviceInfoBean;
-import com.szysky.note.ble.low.DeviceInfoActivity;
 import com.szysky.note.ble.util.ComputerUtils;
 
 import java.util.ArrayList;
@@ -104,6 +103,9 @@ public class BLEActivity extends AppCompatActivity implements AdapterView.OnItem
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // 设置操titlebar文字显示
+        setTitle("蓝牙4.0 BLE搜索");
+
         ListView lv_main = (ListView) findViewById(R.id.lv_main);
 
 

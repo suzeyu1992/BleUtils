@@ -27,15 +27,15 @@
         <activity android:name=".demo.ExpandableTest">
 
         </activity>
-        <activity android:name=".activity.BLEActivity"></activity>
-        <activity android:name=".low.DeviceInfoActivity" />
-        <activity android:name=".activity.CharacteristicDataSendActivity">
+        <activity android:name=".activity.low.BLEActivity"></activity>
+        <activity android:name=".activity.low.DeviceInfoActivity" />
+        <activity android:name=".activity.low.CharacteristicDataSendActivity">
 
 
         </activity>
 
         <service
-            android:name=".low.BluetoothLeService"
+            android:name=".activity.low.BluetoothLeService"
             android:enabled="true"
             android:exported="true" />
 
