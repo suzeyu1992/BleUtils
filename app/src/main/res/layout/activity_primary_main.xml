@@ -1,43 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_primary_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.szysky.note.ble.activity.MainActivity">
+    android:background="@color/su_bg_gray"
+    tools:context="com.szysky.note.ble.activity.MainActivity"
+    >
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/su_bg_gray"
+        >
+
+        <TableRow
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_weight="1">
+            <Button
+                android:id="@+id/btn_try_connection_ble"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:layout_margin="0dp"
+                android:background="@drawable/shape_main_btn_bg"
+                android:text="BLE模式"
+                android:textStyle="bold|italic"
+                android:textSize="20dp"
+                android:textColor="@color/su_text_black"
+                />
+
+            <Button
+                android:id="@+id/btn_try_connection_socket"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:layout_margin="0dp"
+                android:textStyle="bold|italic"
+                android:textSize="20dp"
+                android:textColor="@color/su_text_black"
+                android:text="普通模式" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_weight="1">
+            <Button
+                android:id="@+id/btn_try_phone2phone"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:layout_margin="0dp"
+                android:textStyle="bold|italic"
+                android:textSize="20dp"
+                android:textColor="@color/su_text_black"
+                android:text="模拟BLE外围" />
+
+
+            <Button
+                android:id="@+id/btn_test"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:layout_margin="0dp"
+                android:textStyle="bold|italic"
+                android:textSize="20dp"
+                android:textColor="@color/su_text_black"
+                android:text="测试" />
+
+        </TableRow>
+
+
+
+    </TableLayout>
 
     <Button
-        android:id="@+id/btn_try_connection_ble"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="ble connection" />
+        android:layout_width="150dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
+        android:gravity="center"
 
-    <Button
-        android:id="@+id/btn_try_connection_socket"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:background="@drawable/shape_circle_bg"
 
-        android:text="socket connection" />
+        android:text="选择一个模式吧~"
+        android:textColor="@color/su_text_black"
+        android:textSize="14dp"
 
-    <Button
-        android:id="@+id/btn_try_phone2phone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        />
 
-        android:text="模拟手机ble" />
+</RelativeLayout>
 
-
-    <Button
-        android:id="@+id/btn_test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-
-        android:text="测试" />
-
-
-</LinearLayout>
