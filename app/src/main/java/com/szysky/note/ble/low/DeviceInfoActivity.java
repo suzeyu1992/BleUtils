@@ -142,16 +142,30 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        SuLogUtils.d("onCreate");
         getMenuInflater().inflate(R.menu.connection_ble, menu);
         mCurrentMenu = menu.findItem(R.id.menu_connection_ble);
+        mCurrentMenu.setTitle(mConnected==true? "断开连接": "重新连接");
         return super.onCreateOptionsMenu(menu);
 
     }
 
+    private long lastClickOptionItemTime ;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        SuLogUtils.d("option");
+
         switch (item.getItemId()){
+
             case R.id.menu_connection_ble:
+
+                SuLogUtils.d("时间差: "+(System.currentTimeMillis() - lastClickOptionItemTime));
+
+                // 防止频繁断开
+                if ((System.currentTimeMillis() - lastClickOptionItemTime) < 3000){
+                    Toast.makeText(getApplicationContext(), "你点击的太快哦, 等一会再点.", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
 
                 // 进行设备的连接和断开的按钮
                 if (mConnected) {
@@ -162,6 +176,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
                     mConnected = true;
                     mBluetoothLeService.connect(mDeviceAddress);
                 }
+                lastClickOptionItemTime = System.currentTimeMillis();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -255,6 +270,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
             public void run() {
                 mConnectionState.setText(strBody);
                 if (mCurrentMenu != null){
+                    SuLogUtils.e("@@ +要改变的文本: "+strBody);
                     mCurrentMenu.setTitle(strBody);
                 }
 
@@ -472,13 +488,18 @@ public class DeviceInfoActivity extends AppCompatActivity implements View.OnClic
                 // 获得特征的属性值
                 int properties = characteristic.getProperties();
 
-                // 对监听特征进行描述(description)的数据写入
-                if ((properties != 16)) {
-                    Toast.makeText(getApplicationContext(), "此特种可能不支持监听", Toast.LENGTH_SHORT).show();
-                }
+
 
                 // 获取特征的描述对象
                 BluetoothGattDescriptor desc = characteristic.getDescriptor(UUID.fromString(SampleGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
+
+
+                // 对监听特征进行描述(description)的数据写入
+                if ((properties != 16 && desc == null)) {
+                    Toast.makeText(getApplicationContext(), "此特征不支持监听", Toast.LENGTH_SHORT).show();
+                    mPopupWindow.dismiss();
+                    return;
+                }
 
 
                 // 设置特征的描述 并设置并写入描述
