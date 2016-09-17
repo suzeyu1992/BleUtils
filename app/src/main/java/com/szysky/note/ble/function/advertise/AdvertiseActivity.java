@@ -22,24 +22,25 @@ import com.szysky.note.ble.R;
  * ClassDescription : 把手机端 模拟成在BLE模式下的外围设备 , 可以与默认情况下手机BLE连接作为中心设备 与其对接
  */
 
-
 public class AdvertiseActivity extends AppCompatActivity implements View.OnClickListener {
 
     /**
-     * Lets user toggle BLE Advertising.
+     * 控制模拟BLE外围设备Advertising的开关控件
      */
     private Switch mSwitch;
 
     /**
-     * Listens for notifications that the {@code AdvertiserService} has failed to start advertising.
-     * This Receiver deals with Fragment UI elements and only needs to be active when the Fragment
-     * is on-screen, so it's defined and registered in code instead of the Manifest.
+     * 监听并通知 {@code AdvertiserService} 当模拟Ble Advertising成功或者失败的时候.
+     * 因为广播只需要在当前活动页面存在即可, 暂时不需要静态注册, 只需要动态注册即可
      */
     private BroadcastReceiver advertisingFailureReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_advertise);
+
+        // 设置titleBar文字显示
+        setTitle("模拟BLE外围设备");
 
         mSwitch = (Switch) findViewById(R.id.swi_advertise_switch);
         mSwitch.setOnClickListener(this);
@@ -91,8 +92,8 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
         super.onResume();
 
         /**
-         * When app comes on screen, check if BLE Advertisements are running, set switch accordingly,
-         * and register the Receiver to be notified if Advertising fails.
+         * 当界面获取焦点的时候, 根据Ble Advertising 的状态来设置控件的显示.
+         * 并且注册广播, 当模式外围设备失败的失败, 会接收到广播
          */
         if (AdvertiserService.running) {
             mSwitch.setChecked(true);

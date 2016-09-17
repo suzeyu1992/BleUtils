@@ -19,18 +19,21 @@ import com.szysky.note.ble.R;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Manages BLE Advertising independent of the main app.
- * If the app goes off screen (or gets killed completely) advertising can continue because this
- * Service is maintaining the necessary Callback in memory.
+ * Author : suzeyu
+ * Time   : 16/9/17  下午6:21
+ * Blog   : http://szysky.com
+ * GitHub : https://github.com/suzeyu1992
+ *
+ * ClassDescription : 一个独立管理模拟BLE外围设备服务类
+ *                    即使应用程序锁屏, 或者应用进程被杀掉,此服务仍然存在.
  */
+
 public class AdvertiserService extends Service {
 
     private static final String TAG = AdvertiserService.class.getSimpleName();
 
     /**
-     * A global variable to let AdvertiserFragment check if the Service is running without needing
-     * to start or bind to it.
-     * This is the best practice method as defined here:
+     * 一个用来显示模拟状态的标识符的全局变量, 如果你需要更好的方法, 那么可以看如下定义
      * https://groups.google.com/forum/#!topic/android-developers/jEvXMWgbgzE
      */
     public static boolean running = false;
@@ -50,7 +53,7 @@ public class AdvertiserService extends Service {
     private Runnable timeoutRunnable;
 
     /**
-     * Length of time to allow advertising before automatically shutting off. (10 minutes)
+     * 定义一个长度时间, 在模拟外围设备后, 十分钟的的时候关闭此操作
      */
     private long TIMEOUT = TimeUnit.MILLISECONDS.convert(10, TimeUnit.MINUTES);
 
@@ -65,11 +68,7 @@ public class AdvertiserService extends Service {
 
     @Override
     public void onDestroy() {
-        /**
-         * Note that onDestroy is not guaranteed to be called quickly or at all. Services exist at
-         * the whim of the system, and onDestroy can be delayed or skipped entirely if memory need
-         * is critical.
-         */
+
         running = false;
         stopAdvertising();
         mHandler.removeCallbacks(timeoutRunnable);
@@ -77,8 +76,7 @@ public class AdvertiserService extends Service {
     }
 
     /**
-     * Required for extending service, but this will be a Started Service only, so no need for
-     * binding.
+     * 因为目前仅需要用此服务做到启动的效果, 所以不需要进行bind
      */
     @Override
     public IBinder onBind(Intent intent) {
@@ -86,7 +84,7 @@ public class AdvertiserService extends Service {
     }
 
     /**
-     * Get references to system Bluetooth objects if we don't have them already.
+     * 当我们没有了系统的蓝牙操作对象, 那么可以使用此方法进行重新的获取
      */
     private void initialize() {
         if (mBluetoothLeAdvertiser == null) {
@@ -106,8 +104,7 @@ public class AdvertiserService extends Service {
     }
 
     /**
-     * Starts a delayed Runnable that will cause the BLE Advertising to timeout and stop after a
-     * set amount of time.
+     * 开启一个延迟的Runnable接口, 他将会在BLE Advertising 超时和设定的时间到达时候停止.
      */
     private void setTimeout(){
         mHandler = new Handler();
@@ -123,7 +120,7 @@ public class AdvertiserService extends Service {
     }
 
     /**
-     * Starts BLE Advertising.
+     * 开启 BLE Advertising.
      */
     private void startAdvertising() {
         Log.d(TAG, "Service: Starting Advertising");
@@ -141,7 +138,7 @@ public class AdvertiserService extends Service {
     }
 
     /**
-     * Stops BLE Advertising.
+     * 停止 BLE Advertising.
      */
     private void stopAdvertising() {
         Log.d(TAG, "Service: Stopping Advertising");
@@ -152,7 +149,7 @@ public class AdvertiserService extends Service {
     }
 
     /**
-     * Returns an AdvertiseData object which includes the Service UUID and Device Name.
+     * 返回一个包含服务的UUID 和 设备名称的 AdvertiseData对象
      */
     private AdvertiseData buildAdvertiseData() {
 
@@ -169,7 +166,7 @@ public class AdvertiserService extends Service {
         dataBuilder.addServiceUuid(Constants.Service_UUID);
         dataBuilder.setIncludeDeviceName(true);
 
-        /* For example - this will cause advertising to fail (exceeds size limit) */
+        /* 例如 - 这将导致Advertise文件失败（超过大小限制） */
         //String failureData = "asdghkajsghalkxcjhfa;sghtalksjcfhalskfjhasldkjfhdskf";
         //dataBuilder.addServiceData(Constants.Service_UUID, failureData.getBytes());
 
@@ -177,8 +174,8 @@ public class AdvertiserService extends Service {
     }
 
     /**
-     * Returns an AdvertiseSettings object set to use low power (to help preserve battery life)
-     * and disable the built-in timeout since this code uses its own timeout runnable.
+     * 返回一个 {@link AdvertiseSettings}对象, 这个对象设置了使用低功率模式(减少手机电池的使用),
+     * 并且禁用了内置超时, 因为这个段代码使用自己的超时即可.
      */
     private AdvertiseSettings buildAdvertiseSettings() {
         AdvertiseSettings.Builder settingsBuilder = new AdvertiseSettings.Builder();
@@ -188,8 +185,7 @@ public class AdvertiserService extends Service {
     }
 
     /**
-     * Custom callback after Advertising succeeds or fails to start. Broadcasts the error code
-     * in an Intent to be picked up by AdvertiserFragment and stops this Service.
+     * 设置Advertising 模式外围设备操作的结果回调. 如果模拟失败会发送一个带有错误码的广播. 并可在接收处提示并关闭此服务
      */
     private class SampleAdvertiseCallback extends AdvertiseCallback {
 
@@ -211,8 +207,7 @@ public class AdvertiserService extends Service {
     }
 
     /**
-     * Builds and sends a broadcast intent indicating Advertising has failed. Includes the error
-     * code as an extra. This is intended to be picked up by the {@code AdvertiserFragment}.
+     * 封装一个发送广播的方法, 当模式周边设备失败, 传入一个错误码即可. 内部会把错误码作为intent的外部传递数据供广播接收者接收处理
      */
     private void sendFailureIntent(int errorCode){
         Intent failureIntent = new Intent();
