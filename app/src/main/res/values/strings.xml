@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">BlE</string>
     <string name="scan_rssi">rssi: %1$d</string>
+    <string name="ble_advertising_comment">模拟BLE外围设备开关</string>
+    <string name="bt_null">Error: Bluetooth object null</string>
+    <string name="start_error_prefix">Start Advertising failed: </string>
+    <string name="start_error_already_started">already started.</string>
+    <string name="start_error_too_large">data packet exceeded 31 Byte limit.</string>
+    <string name="start_error_unsupported">not supported on this device.</string>
+    <string name="start_error_internal">internal error.</string>
+    <string name="start_error_too_many">too many advertisers.</string>
+    <string name="start_error_unknown">unknown error</string>
+    <string name="advertising_timedout">Advertising stopped due to timeout.</string>
 </resources>

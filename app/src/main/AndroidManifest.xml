@@ -16,30 +16,30 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".function.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".demo.ExpandableTest">
-
-        </activity>
-        <activity android:name=".activity.low.BLEActivity"></activity>
-        <activity android:name=".activity.low.DeviceInfoActivity" />
-        <activity android:name=".activity.low.CharacteristicDataSendActivity">
-
-
-        </activity>
+        <activity android:name=".demo.ExpandableTest"></activity>
+        <activity android:name=".function.low.BLEActivity" />
+        <activity android:name=".function.low.DeviceInfoActivity" />
+        <activity android:name=".function.low.CharacteristicDataSendActivity"></activity>
 
         <service
-            android:name=".activity.low.BluetoothLeService"
+            android:name=".function.low.BluetoothLeService"
             android:enabled="true"
             android:exported="true" />
 
+        <service
+            android:name=".function.advertise.AdvertiserService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
 
+        <activity android:name=".function.advertise.AdvertiseActivity"></activity>
     </application>
 
 </manifest>

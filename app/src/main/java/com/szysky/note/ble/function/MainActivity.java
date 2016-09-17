@@ -1,4 +1,4 @@
-package com.szysky.note.ble.activity;
+package com.szysky.note.ble.function;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
@@ -10,7 +10,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.szysky.note.ble.R;
-import com.szysky.note.ble.activity.low.BLEActivity;
+import com.szysky.note.ble.function.advertise.AdvertiseActivity;
+import com.szysky.note.ble.function.low.BLEActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -78,7 +79,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             //  使用蓝牙4.0进行连接, 模拟设备当外围设备
             case R.id.btn_try_phone2phone:
-
+                intent.setClass(getApplicationContext(), AdvertiseActivity.class);
+                startActivity(intent);
                 break;
 
             //  测试跳转无具体内容

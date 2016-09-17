@@ -4,7 +4,7 @@ package com.szysky.note.ble.util;
 
 import android.util.Log;
 
-import com.szysky.note.ble.activity.MainActivity;
+import com.szysky.note.ble.function.MainActivity;
 
 
 public class SuLogUtils {

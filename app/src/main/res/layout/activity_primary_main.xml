@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/su_bg_gray"
-    tools:context="com.szysky.note.ble.activity.MainActivity"
+    tools:context="com.szysky.note.ble.function.MainActivity"
     >
     <TableLayout
         android:layout_width="match_parent"

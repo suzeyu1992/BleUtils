@@ -1,4 +1,4 @@
-package com.szysky.note.ble.activity.low;
+package com.szysky.note.ble.function.low;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
