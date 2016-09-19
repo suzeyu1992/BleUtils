@@ -16,6 +16,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -53,9 +55,37 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
      * 因为广播只需要在当前活动页面存在即可, 暂时不需要静态注册, 只需要动态注册即可
      */
     private BroadcastReceiver advertisingFailureReceiver;
+
+    /**
+     *  显示已经被多少设备连接 的文本控件
+     */
     private TextView mConSizeTextView;
 
+    /**
+     *  被连接的设备数量
+     */
     private int mConnectionNumber;
+
+    /**
+     *  通知Handler更新显示连接数量控件的flag
+     */
+    private final int FLAG_UPDATE_CON_SIZE_VIEW = 0x60;
+
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+
+            switch (msg.what){
+                case FLAG_UPDATE_CON_SIZE_VIEW:
+                    mConSizeTextView.setText(mConnectionNumber+"");
+                    return true;
+            }
+
+            return false;
+        }
+    });
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,23 +160,12 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
 
                             if (newState == 2){
                                 ++mConnectionNumber;
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mConSizeTextView.setText(mConnectionNumber+"");
-
-                                    }
-                                });
                             }else if (newState == 0){
                                 mConnectionNumber--;
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mConSizeTextView.setText(mConnectionNumber+"");
-
-                                    }
-                                });
                             }
+
+                            // 更新显示连接数量的TextView
+                            mHandler.obtainMessage(FLAG_UPDATE_CON_SIZE_VIEW).sendToTarget();
 
                             BluetoothDevice remoteDevice = mBluetoothAdapter.getRemoteDevice(device.getAddress());
                             String name = remoteDevice.toString();
