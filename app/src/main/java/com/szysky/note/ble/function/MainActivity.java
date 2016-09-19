@@ -3,7 +3,12 @@ package com.szysky.note.ble.function;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -36,6 +41,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         conSocketButton.setOnClickListener(this);
         testButton.setOnClickListener(this);
 
+        boolean gpsEnable = isGpsEnable(getApplicationContext());
+        if (!gpsEnable){
+//            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//            startActivityForResult(intent,22);
+
+            openGPS(getApplicationContext());
+        }
+
+    }
+
+    /**
+     * 强制帮用户打开GPS
+     * @param context
+     */
+    public static final void openGPS(Context context) {
+        Intent GPSIntent = new Intent();
+        GPSIntent.setClassName("com.android.settings",
+                "com.android.settings.widget.SettingsAppWidgetProvider");
+        GPSIntent.addCategory("android.intent.category.ALTERNATIVE");
+        GPSIntent.setData(Uri.parse("custom:3"));
+        try {
+            PendingIntent.getBroadcast(context, 0, GPSIntent, 0).send();
+        } catch (PendingIntent.CanceledException e) {
+            e.printStackTrace();
+        }
+    }
+    // Gps是否可用
+    public static final boolean isGpsEnable(final Context context) {
+        LocationManager locationManager
+                = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean network = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        if (gps || network) {
+            return true;
+        }
+        return false;
     }
 
     private void setViewAnimation(View... views){
