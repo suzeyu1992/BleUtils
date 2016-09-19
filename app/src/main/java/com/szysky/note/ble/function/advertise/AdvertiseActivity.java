@@ -2,6 +2,7 @@ package com.szysky.note.ble.function.advertise;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattServer;
@@ -9,6 +10,8 @@ import android.bluetooth.BluetoothGattServerCallback;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.AdvertiseCallback;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.szysky.note.ble.R;
@@ -49,6 +53,10 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
      * 因为广播只需要在当前活动页面存在即可, 暂时不需要静态注册, 只需要动态注册即可
      */
     private BroadcastReceiver advertisingFailureReceiver;
+    private TextView mConSizeTextView;
+
+    private int mConnectionNumber;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +66,7 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
         setTitle("模拟BLE外围设备");
 
         mSwitch = (Switch) findViewById(R.id.swi_advertise_switch);
+        mConSizeTextView = (TextView) findViewById(R.id.tv_connection_size);
         mSwitch.setOnClickListener(this);
 
         advertisingFailureReceiver = new BroadcastReceiver() {
@@ -105,6 +114,7 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
         final BluetoothManager mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         final BluetoothAdapter mBluetoothAdapter = mBluetoothManager.getAdapter();
 
+        mConSizeTextView.setText(10+"");
 
         new Thread(new Runnable() {
             @Override
@@ -118,9 +128,29 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
                             super.onConnectionStateChange(device, status, newState);
                             SuLogUtils.d("onConnectionStateChange");
 
-                            BluetoothDevice remoteDevice = mBluetoothAdapter.getRemoteDevice(device.getAddress());
-                            String name = remoteDevice.getName();
+                            if (newState == 2){
+                                ++mConnectionNumber;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mConSizeTextView.setText(mConnectionNumber+"");
 
+                                    }
+                                });
+                            }else if (newState == 0){
+                                mConnectionNumber--;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mConSizeTextView.setText(mConnectionNumber+"");
+
+                                    }
+                                });
+                            }
+
+                            BluetoothDevice remoteDevice = mBluetoothAdapter.getRemoteDevice(device.getAddress());
+                            String name = remoteDevice.toString();
+                            int size = mBluetoothAdapter.getBondedDevices().size();
 
 
 //                            boolean connect = bluetoothGattServer.connect(device, false);
@@ -147,7 +177,7 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
                         public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
                             super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
                             SuLogUtils.d("onCharacteristicWriteRequest");
-                            SuLogUtils.d("onDescriptorWriteRequest  request:"+requestId +" prepareWrite:"+preparedWrite +" responseNeeded:"+responseNeeded
+                            SuLogUtils.d("onDescriptorWriteRequest  request:"+requestId+characteristic.getUuid().toString() +" prepareWrite:"+preparedWrite +" responseNeeded:"+responseNeeded
                                     +" offset:"+offset +" 数据:"+ Arrays.toString(value));
                         }
 
