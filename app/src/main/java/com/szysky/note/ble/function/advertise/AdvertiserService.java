@@ -181,6 +181,7 @@ public class AdvertiserService extends Service {
         AdvertiseSettings.Builder settingsBuilder = new AdvertiseSettings.Builder();
         settingsBuilder.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER);
         settingsBuilder.setTimeout(0);
+
         return settingsBuilder.build();
     }
 

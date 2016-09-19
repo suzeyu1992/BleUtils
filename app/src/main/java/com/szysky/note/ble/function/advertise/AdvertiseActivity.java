@@ -1,10 +1,19 @@
 package com.szysky.note.ble.function.advertise;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothGattServer;
+import android.bluetooth.BluetoothGattServerCallback;
+import android.bluetooth.BluetoothGattService;
+import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.AdvertiseCallback;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +21,11 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.szysky.note.ble.R;
+import com.szysky.note.ble.util.SuLogUtils;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Author : suzeyu
@@ -29,6 +43,7 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
      */
     private Switch mSwitch;
 
+    BluetoothGattServer bluetoothGattServer=null;
     /**
      * 监听并通知 {@code AdvertiserService} 当模拟Ble Advertising成功或者失败的时候.
      * 因为广播只需要在当前活动页面存在即可, 暂时不需要静态注册, 只需要动态注册即可
@@ -85,6 +100,101 @@ public class AdvertiseActivity extends AppCompatActivity implements View.OnClick
                 Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
             }
         };
+
+
+        final BluetoothManager mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        final BluetoothAdapter mBluetoothAdapter = mBluetoothManager.getAdapter();
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (true){
+                    SystemClock.sleep(1000);
+
+                    bluetoothGattServer = mBluetoothManager.openGattServer(AdvertiseActivity.this, new BluetoothGattServerCallback() {
+                        @Override
+                        public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
+                            super.onConnectionStateChange(device, status, newState);
+                            SuLogUtils.d("onConnectionStateChange");
+
+                            BluetoothDevice remoteDevice = mBluetoothAdapter.getRemoteDevice(device.getAddress());
+                            String name = remoteDevice.getName();
+
+
+
+//                            boolean connect = bluetoothGattServer.connect(device, false);
+
+                            List<BluetoothDevice> connectedDevices = bluetoothGattServer.getConnectedDevices();
+
+
+
+                        }
+
+                        @Override
+                        public void onServiceAdded(int status, BluetoothGattService service) {
+                            super.onServiceAdded(status, service);
+                            SuLogUtils.d("onServiceAdded");
+                        }
+
+                        @Override
+                        public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic) {
+                            super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
+                            SuLogUtils.d("onCharacteristicReadRequest");
+                        }
+
+                        @Override
+                        public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
+                            super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite, responseNeeded, offset, value);
+                            SuLogUtils.d("onCharacteristicWriteRequest");
+                            SuLogUtils.d("onDescriptorWriteRequest  request:"+requestId +" prepareWrite:"+preparedWrite +" responseNeeded:"+responseNeeded
+                                    +" offset:"+offset +" 数据:"+ Arrays.toString(value));
+                        }
+
+                        @Override
+                        public void onDescriptorReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattDescriptor descriptor) {
+                            super.onDescriptorReadRequest(device, requestId, offset, descriptor);
+                            SuLogUtils.d("onDescriptorReadRequest");
+
+                        }
+
+                        @Override
+                        public void onDescriptorWriteRequest(BluetoothDevice device, int requestId, BluetoothGattDescriptor descriptor, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
+                            super.onDescriptorWriteRequest(device, requestId, descriptor, preparedWrite, responseNeeded, offset, value);
+
+                        }
+
+                        @Override
+                        public void onExecuteWrite(BluetoothDevice device, int requestId, boolean execute) {
+                            super.onExecuteWrite(device, requestId, execute);
+                            SuLogUtils.d("onExecuteWrite");
+                        }
+
+                        @Override
+                        public void onNotificationSent(BluetoothDevice device, int status) {
+                            super.onNotificationSent(device, status);
+                            SuLogUtils.d("onNotificationSent");
+                        }
+
+                        @Override
+                        public void onMtuChanged(BluetoothDevice device, int mtu) {
+                            super.onMtuChanged(device, mtu);
+                            SuLogUtils.d("onMtuChanged");
+                        }
+                    });
+                    BluetoothGattService bluetoothGattService = new BluetoothGattService(UUID.fromString("0000fff0-0000-1000-8000-00805f9b34fb"), BluetoothGattService.SERVICE_TYPE_PRIMARY);
+
+                    BluetoothGattCharacteristic bluetoothGattCharacteristic =
+                            new BluetoothGattCharacteristic(UUID.fromString("0000fff0-0000-1000-8000-00805f9b34fb"),
+                                    BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE, BluetoothGattCharacteristic.PERMISSION_WRITE);
+                    bluetoothGattService.addCharacteristic(bluetoothGattCharacteristic);
+
+                    boolean b = bluetoothGattServer.addService(bluetoothGattService);
+                }
+            }
+        }).start();
+
+
     }
 
     @Override
